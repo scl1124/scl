@@ -1,3 +1,4 @@
+
 name: Build APK
 
 on:
@@ -12,14 +13,23 @@ jobs:
 
       - name: Unpack project
         run: |
-          for n in 1 2 3; do cat "$(find . -path ./.git -prune -o -name "p$n.txt" -print | head -n 1)"; done | base64 -d | tar -xJ
+          for n in 1 2 3; do
+            cat "$(find . -path ./.git -prune -o -name "p$n.txt" -print | head -n 1)"
+          done | base64 -d | tar -xJ
 
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
 
-      - uses: android-actions/setup-android@v3
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: ''
+
+      - name: Install Android SDK packages
+        run: |
+          sdkmanager --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - uses: gradle/actions/setup-gradle@v4
         with:
